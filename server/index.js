@@ -19,7 +19,7 @@ const createEnd = (pagesId, filenameId, bancoId) => {
 app.get('/', async (req, res) => {
     data = req.body;
     // Faltan params de data
-    const api = createEnd();
+    const api = createEnd('1,2,3,4','2T20.pdf', 'Santander' );
     const response =  await fetch(api, {
         method: "GET",
     })
