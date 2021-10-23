@@ -1,0 +1,14 @@
+.info-button {
+    width: 30vw;
+    height: 40vh;
+    margin: 25vh auto;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    padding: 2vh 1vw 3vh 1vw;
+    background-color: #f6f6f6;
+}
+
+.margin-top {
+    margin-top: 20vh;
+}
