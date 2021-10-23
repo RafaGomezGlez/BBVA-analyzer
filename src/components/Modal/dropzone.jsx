@@ -1,25 +1,22 @@
 import DeleteIcon from '@material-ui/icons/Delete';
 import UploadFile from '@mui/icons-material/UploadFile';
-import {
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Typography,
-} from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
 import AWS from 'aws-sdk';
-
-// import UploadService from './upload-file';
 
 export default class UploadFiles extends Component {
   constructor(props) {
     super(props);
     this.upload = this.upload.bind(this);
     this.onDrop = this.onDrop.bind(this);
-    this.fileReader = null;
+    this.currentFile = '';
+
     this.state = {
       selectedFiles: undefined,
       currentFile: undefined,
@@ -32,14 +29,14 @@ export default class UploadFiles extends Component {
 
   deleteFileByIndex(index) {
     const files = this.state.fileInfos.filter((item, i) => i !== index);
-    console.log(index);
+
     this.props.setFiles(files);
     this.setState({
       fileInfos: files,
     });
   }
 
-  uploadFile(e) {
+  uploadFile(e, filename) {
     const s3 = new AWS.S3({
       accessKeyId: 'AKIAYNPWXNHBAAYUDROY',
       secretAccessKey: '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',
@@ -47,7 +44,7 @@ export default class UploadFiles extends Component {
 
     const params = {
       Bucket: 'hackatonbbvasourcecoders',
-      Key: 'cat.pdf', // File name you want to save as in S3
+      Key: filename, // File name you want to save as in S3
       Body: e.currentTarget.result,
     };
 
@@ -58,28 +55,22 @@ export default class UploadFiles extends Component {
       }
       console.log(`File uploaded successfully. ${data.Location}`);
     });
-    // console.log('done');
-    // const content = this.fileReader.result;
-    // console.log(content);
-    // … do something with the 'content' …
   }
 
   readFile(file) {
-    this.fileReader = new FileReader();
-    this.fileReader.onloadend = this.uploadFile;
-    this.fileReader.readAsText(file);
+    const fileReader = new FileReader();
+
+    fileReader.onloadend = (e) => this.uploadFile(e, file.name);
+    fileReader.readAsText(file);
   }
 
   upload() {
-    let currentFile = this.state.selectedFiles[0];
-
     this.state.selectedFiles.forEach((file) => {
-      this.readFile(currentFile);
+      this.readFile(file);
     });
 
     this.setState({
       progress: 0,
-      currentFile: currentFile,
       fileInfos: this.state.selectedFiles,
     });
 
@@ -96,11 +87,11 @@ export default class UploadFiles extends Component {
   }
 
   onDragEnter() {
-    this.setState({ backgroundColor: 'blue' });
+    this.setState({ color: 'blue' });
   }
 
   onDragLeave() {
-    this.setState({ backgroundColor: 'black' });
+    this.setState({ color: 'black' });
   }
 
   render() {
